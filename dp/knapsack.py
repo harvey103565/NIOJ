@@ -9,13 +9,9 @@ class Knapsack:
         n = len(v)
 
         dp = np.zeros((n, self._volume + 1), dtype=np.int)
-        for j in range(self._volume + 1):
-            if j >= c[0]:
-                dp[0][j] = v[0]
-        
-        for i in range(1, n):
+        for i in range(n):
             for j in range(self._volume + 1):
-                if j + 1 > c[i]:
+                if j >= c[i]:
                     dp[i][j] = max((dp[i - 1][j - c[i]] + v[i]), dp[i - 1][j])
                 else:
                     dp[i][j] = dp[i - 1][j]
@@ -28,8 +24,8 @@ class Knapsack:
         dp = np.zeros(self._volume + 1, dtype=np.int)
 
         for i in range(n):
-            for j in range(self._volume, 0, -1):
-                if j > c[i]:
+            for j in range(self._volume, c[i] - 1, -1):
+                if j >= c[i]:
                     dp[j] = max(dp[j - c[i]] + v[i], dp[j])
 
         return dp
