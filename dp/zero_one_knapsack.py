@@ -14,8 +14,8 @@ class Knapsack:
             the i-th item is ignore, we also check the result of i - 1 sub-problem, but with the volumn of sack of v.
         """
         n = len(value)
-
         dp = np.zeros((n, self._volume + 1), dtype=np.int)
+
         for i in range(n):
             for j in range(self._volume + 1):
                 if j >= cost[i]:
@@ -33,16 +33,28 @@ class Knapsack:
             result of former sub-problem.
         """
         n = len(value)
-
         dp = np.zeros(self._volume + 1, dtype=np.int)
 
         for i in range(n):
             for j in range(self._volume, cost[i] - 1, -1):
-                if j >= cost[i]:
-                    dp[j] = max(dp[j - cost[i]] + value[i], dp[j])
+                dp[j] = max(dp[j - cost[i]] + value[i], dp[j])
 
         return dp
     
+    def warp_opt_exact_match(self, value: list, cost: list) -> list:
+        """
+        """
+        n = len(value)
+        dp = np.array([-1] * (self._volume + 1), dtype=np.int)
+
+        for i in range(n):
+            for j in range(self._volume, cost[i] - 1, -1):
+                if j == cost[i]:
+                    dp[j] = max(dp[j], value[i])
+                elif dp[j - cost[i]] != -1:
+                    dp[j] = max(dp[j - cost[i]] + value[i], dp[j])
+        
+        return dp
 
 knapsack = Knapsack(15)
 
@@ -51,5 +63,8 @@ print(r1)
 
 r2 = knapsack.wrap_opt((12, 3, 10, 3, 6), (5, 4, 7, 2, 6))
 print(r2)
+
+r3 = knapsack.warp_opt_exact_match((12, 3, 10, 3, 6), (5, 4, 7, 2, 6))
+print(r3)
 
 pass

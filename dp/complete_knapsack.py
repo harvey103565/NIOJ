@@ -46,16 +46,39 @@ class Knapsack:
 
         return dp
 
+    def warp_opt_exact_match(self, value: list, cost: list) -> list:
+        """
+        """
+        n = len(value)
+        dp = np.array([-1] * (self._volumn + 1), dtype=np.int)
+        
+        for i in range(n):
+            k = 1
+            l = self._volumn // cost[i]
+            while k <= l:
+                for j in range(self._volumn, cost[i] * k - 1, -1):
+                    if j == cost[i] * k:
+                        dp[j] = max(dp[j], value[i] * k)
+                    elif dp[j - cost[i] * k] != -1:
+                        dp[j] = max(dp[j - cost[i] * k] + value[i] * k, dp[j])
+                k *= 2
+
+        return dp
+
+
 
 knapsack = Knapsack(14)
 
-# r1 = knapsack.wrap((12, 3, 10, 3, 6), (5, 4, 7, 2, 6))
-# print(r1)
+r1 = knapsack.wrap((12, 3, 10, 3, 6), (5, 4, 7, 2, 6))
+print(r1)
 
 r2 = knapsack.wrap((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
 print(r2)
 
 r3 = knapsack.wrap_opt((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
 print(r3)
+
+r4 = knapsack.warp_opt_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r4)
 
 pass
