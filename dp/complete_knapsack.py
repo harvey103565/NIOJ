@@ -16,7 +16,7 @@ class Knapsack:
 
         """
         n = len(value)
-        dp = np.zeros(self._volume + 1, dtype=np.int)
+        dp = np.zeros(self._volumn + 1, dtype=np.int)
         
         for i in range(n):
             k = self._volumn // cost[i]
@@ -26,13 +26,36 @@ class Knapsack:
 
         return dp
 
+    def wrap_opt(self, value: list, cost: list) -> list:
+        """
+        Wrap all item into knapsack
+            : A small optimization. Items are divided following the rule: [1/2, 1/4, 1/8, ... ] rather than [1, 1, 1]
+            So the middle loop(the k-loop) run log(n) times instead of n time.
 
-knapsack = Knapsack(15)
+        """
+        n = len(value)
+        dp = np.zeros(self._volumn + 1, dtype=np.int)
+        
+        for i in range(n):
+            k = 1
+            l = self._volumn // cost[i]
+            while k <= l:
+                for j in range(self._volumn, cost[i] * k - 1, -1):
+                    dp[j] = max(dp[j - cost[i] * k] + value[i] * k, dp[j])
+                k *= 2
 
-r1 = knapsack.wrap((12, 3, 10, 3, 6), (5, 4, 7, 2, 6))
-print(r1)
+        return dp
 
-# r2 = knapsack.wrap_opt((12, 3, 10, 3, 6), (5, 4, 7, 2, 6))
+
+knapsack = Knapsack(14)
+
+# r1 = knapsack.wrap((12, 3, 10, 3, 6), (5, 4, 7, 2, 6))
+# print(r1)
+
+r2 = knapsack.wrap((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
 print(r2)
+
+r3 = knapsack.wrap_opt((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r3)
 
 pass
