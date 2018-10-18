@@ -14,14 +14,15 @@ class Knapsack:
             the i-th item is ignore, we also check the result of i - 1 sub-problem, but with the volumn of sack of v.
         """
         n = len(value)
+        # TODO: Argument checking
         dp = np.zeros((n, self._volume + 1), dtype=np.int)
 
         for i in range(n):
-            for j in range(self._volume + 1):
-                if j >= cost[i]:
-                    dp[i][j] = max((dp[i - 1][j - cost[i]] + value[i]), dp[i - 1][j])
+            for v in range(self._volume + 1):
+                if v >= cost[i]:
+                    dp[i][v] = max((dp[i - 1][v - cost[i]] + value[i]), dp[i - 1][v])
                 else:
-                    dp[i][j] = dp[i - 1][j]
+                    dp[i][v] = dp[i - 1][v]
 
         return dp
 
@@ -33,11 +34,12 @@ class Knapsack:
             result of former sub-problem.
         """
         n = len(value)
+        # TODO: Argument checking
         dp = np.zeros(self._volume + 1, dtype=np.int)
 
         for i in range(n):
-            for j in range(self._volume, cost[i] - 1, -1):
-                dp[j] = max(dp[j - cost[i]] + value[i], dp[j])
+            for v in range(self._volume, cost[i] - 1, -1):
+                dp[v] = max(dp[v - cost[i]] + value[i], dp[v])
 
         return dp
     
@@ -45,14 +47,15 @@ class Knapsack:
         """
         """
         n = len(value)
+        # TODO: Argument checking
         dp = np.array([-1] * (self._volume + 1), dtype=np.int)
 
         for i in range(n):
-            for j in range(self._volume, cost[i] - 1, -1):
-                if j == cost[i]:
-                    dp[j] = max(dp[j], value[i])
-                elif dp[j - cost[i]] != -1:
-                    dp[j] = max(dp[j - cost[i]] + value[i], dp[j])
+            for v in range(self._volume, cost[i] - 1, -1):
+                if v == cost[i]:
+                    dp[v] = max(dp[v], value[i])
+                elif dp[v - cost[i]] != -1:
+                    dp[v] = max(dp[v - cost[i]] + value[i], dp[v])
         
         return dp
 

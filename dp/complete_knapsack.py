@@ -16,13 +16,15 @@ class Knapsack:
 
         """
         n = len(value)
+        # TODO: Argument checking
         dp = np.zeros(self._volumn + 1, dtype=np.int)
         
         for i in range(n):
             k = self._volumn // cost[i]
             for l in range(k):
-                for j in range(self._volumn, cost[i] - 1, -1):
-                    dp[j] = max(dp[j - cost[i]] + value[i], dp[j])
+                l = l   # eliminate warning
+                for v in range(self._volumn, cost[i] - 1, -1):
+                    dp[v] = max(dp[v - cost[i]] + value[i], dp[v])
 
         return dp
 
@@ -34,14 +36,15 @@ class Knapsack:
 
         """
         n = len(value)
+        # TODO: Argument checking
         dp = np.zeros(self._volumn + 1, dtype=np.int)
         
         for i in range(n):
             k = 1
             l = self._volumn // cost[i]
             while k <= l:
-                for j in range(self._volumn, cost[i] * k - 1, -1):
-                    dp[j] = max(dp[j - cost[i] * k] + value[i] * k, dp[j])
+                for v in range(self._volumn, cost[i] * k - 1, -1):
+                    dp[v] = max(dp[v - cost[i] * k] + value[i] * k, dp[v])
                 k *= 2
 
         return dp
@@ -50,19 +53,53 @@ class Knapsack:
         """
         """
         n = len(value)
+        # TODO: Argument checking
         dp = np.array([-1] * (self._volumn + 1), dtype=np.int)
         
         for i in range(n):
             k = 1
             l = self._volumn // cost[i]
             while k <= l:
-                for j in range(self._volumn, cost[i] * k - 1, -1):
-                    if j == cost[i] * k:
-                        dp[j] = max(dp[j], value[i] * k)
-                    elif dp[j - cost[i] * k] != -1:
-                        dp[j] = max(dp[j - cost[i] * k] + value[i] * k, dp[j])
+                for v in range(self._volumn, cost[i] * k - 1, -1):
+                    if v == cost[i] * k:
+                        dp[v] = max(dp[v], value[i] * k)
+                    elif dp[v - cost[i] * k] != -1:
+                        dp[v] = max(dp[v - cost[i] * k] + value[i] * k, dp[v])
                 k *= 2
 
+        return dp
+
+    def wrap_optimum(self, value: list, cost: list) -> list:
+        """
+            : If volumn loop goes from minimum to maximum, then former result(dp[v - cost[i]]) has been taken into account
+            when checking the volumn of v, and current result(dp[v]) will be checked in the future when the volumn of sack
+            reached dp[v + cost[i]], this repeats N times where N < (maximum volumn // cost[i]). 
+            Thus complete knapsack problem is sovled in this way by reversing the loop direction of volumn.
+            Note: we do not need to check the volumn of free space even N times i-th item's cost is added, because only 
+            when v equals N * cost[i] + M * cost[i - 1] + ... the dp[v - cost[i]] equals M * value[i - 1] + ...
+        """
+        n = len(value)
+        # TODO: Argument checking
+        dp = np.zeros(self._volumn + 1, dtype=np.int)
+
+        for i in range(n):
+            for v in range(cost[i], self._volumn + 1):
+                dp[v] = max(dp[v - cost[i]] + value[i], dp[v])
+        
+        return dp
+
+    def wrap_optimum_exact_match(self, value: list, cost: list) -> list:
+        n = len(value)
+        # TODO: Argument checking
+        dp = np.array([-1] * (self._volumn + 1), dtype=np.int)
+
+        for i in range(n):
+            for v in range(cost[i], self._volumn + 1):
+                if v == cost[i]:
+                    dp[v] = max(value[i], dp[v])
+                elif dp[v - cost[i]] != -1:
+                    dp[v] = max(dp[v - cost[i]] + value[i], dp[v])
+        
         return dp
 
 
@@ -78,7 +115,13 @@ print(r2)
 r3 = knapsack.wrap_opt((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
 print(r3)
 
-r4 = knapsack.warp_opt_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+r4 = knapsack.wrap_optimum((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
 print(r4)
+
+r5 = knapsack.warp_opt_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r5)
+
+r6 = knapsack.wrap_optimum_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r6)
 
 pass
