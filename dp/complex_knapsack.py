@@ -1,10 +1,24 @@
 import numpy as np
 
+class MonotonicArray:
+    def __init__(self, values: np.ndarray):
+        self._values = values
+        self._capacity = len(values)
+        self._array = np.zeros(self._capacity)
+        self._cnt = 0
+        self._head = 0
+        self._tail = 0
+
+    def add(self, index: int):
+        for i in range(-1, -self._cnt - 1, -1):
+            if self._values[index] < self._values[self._array[i]]:
+                
+
 class Knapsack:
     def __init__(self, volume: int):
         self._volume = volume
 
-    def wrap(self, value: tuple, size: tuple, quantity: tuple) -> tuple:
+    def wrap(self, value: tuple, size: tuple, quantity: tuple) -> np.ndarray:
         """
             : Same solution with complete knapsack. There are n single ones for i-th item, so we change it to 0-1 
             knapsack problem.
@@ -31,7 +45,7 @@ class Knapsack:
         l[n] = k                        # l[n + i + 1] is next value(new tail, the minimum)
         return n
 
-    def wrap_optimum(self, value: tuple, size: tuple, quantity: tuple) -> tuple:
+    def wrap_optimum(self, value: tuple, size: tuple, quantity: tuple) -> np.ndarray:
         """
         """
         n = len(value)
@@ -39,10 +53,10 @@ class Knapsack:
         dp = np.zeros(self._volume + 1, dtype=np.int)
         mq = np.zeros(self._volume)
         for i in range(n):
+            pass
+
+        return dp
             
-
-
-
 
 knapsack = Knapsack(15)
 

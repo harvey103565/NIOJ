@@ -5,7 +5,7 @@ class Knapsack:
     def __init__(self, volume: int):
         self._volume = volume
 
-    def wrap(self, value: list, size: list) -> list:
+    def wrap(self, value: tuple, size: tuple) -> np.ndarray:
         """
             : Most ordinary way to solve this problem. There is a sack with volumn of v and some i items. Choose
             the larger one between dp[i - 1][v - size[i]] + value[i] and dp[i - 1][v]. The former one means that
@@ -26,7 +26,7 @@ class Knapsack:
 
         return dp
 
-    def wrap_opt(self, value: list, size: list) -> list:
+    def wrap_opt(self, value: tuple, size: tuple) -> np.ndarray:
         """
             : An optimized way. Since each time we just need to check dp[i - 1] which is i - 1 scale sub-problem. 
             So it is not neccessary to save result of sub-problem earlier than i - 1. In order to save memory,
@@ -43,7 +43,7 @@ class Knapsack:
 
         return dp
     
-    def warp_opt_exact_match(self, value: list, size: list) -> list:
+    def warp_opt_exact_match(self, value: tuple, size: tuple) -> np.ndarray:
         """
         """
         n = len(value)
@@ -58,6 +58,7 @@ class Knapsack:
                     dp[v] = max(dp[v - size[i]] + value[i], dp[v])
         
         return dp
+
 
 knapsack = Knapsack(15)
 

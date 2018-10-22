@@ -4,7 +4,7 @@ class Knapsack:
     def __init__(self, volume: int):
         self._volume = volume
 
-    def wrap(self, value: list, size: list) -> list:
+    def wrap(self, value: tuple, size: tuple) -> np.ndarray:
         """
         Wrap all item into knapsack
             : For complete knapsack problem, every item could be taken as many times as it could be. It's ordinary 
@@ -28,7 +28,7 @@ class Knapsack:
 
         return dp
 
-    def wrap_opt(self, value: list, size: list) -> list:
+    def wrap_opt(self, value: tuple, size: tuple) -> np.ndarray:
         """
         Wrap all item into knapsack
             : A small optimization. Items are divided following the rule: [1/2, 1/4, 1/8, ... ] rather than [1, 1, 1]
@@ -49,7 +49,7 @@ class Knapsack:
 
         return dp
 
-    def warp_opt_exact_match(self, value: list, size: list) -> list:
+    def warp_opt_exact_match(self, value: tuple, size: tuple) -> np.ndarray:
         """
         """
         n = len(value)
@@ -69,7 +69,7 @@ class Knapsack:
 
         return dp
 
-    def wrap_optimum(self, value: list, size: list) -> list:
+    def wrap_optimum(self, value: tuple, size: tuple) -> np.ndarray:
         """
             : If volumn loop goes from minimum to maximum, then former result(dp[v - size[i]]) has been taken into account
             when checking the volumn of v, and current result(dp[v]) will be checked in the future when the volumn of sack
@@ -88,7 +88,7 @@ class Knapsack:
         
         return dp
 
-    def wrap_optimum_exact_match(self, value: list, size: list) -> list:
+    def wrap_optimum_exact_match(self, value: tuple, size: tuple) -> np.ndarray:
         n = len(value)
         # TODO: Argument checking
         dp = np.array([-1] * (self._volume + 1), dtype=np.int)
