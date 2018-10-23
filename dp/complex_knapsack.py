@@ -1,18 +1,25 @@
 import numpy as np
 
-class MonotonicArray:
-    def __init__(self, values: np.ndarray):
-        self._values = values
-        self._capacity = len(values)
-        self._array = np.zeros(self._capacity)
-        self._cnt = 0
-        self._head = 0
-        self._tail = 0
 
-    def add(self, index: int):
-        for i in range(-1, -self._cnt - 1, -1):
-            if self._values[index] < self._values[self._array[i]]:
-                
+class MonotoneArray:
+    def __init__(self, row: int, col: int, window: int):
+        self._array = np.zeros((row, col), dtype=np.int)
+        self._coursors = [(0, 0)] * row
+        self._window = window
+
+    def put(self, row: int, value: int, index: int):
+        head, tail = self._coursors[row]
+
+        for k in range(tail, head - 1, -1):
+            v, i = self._array[row][k]
+            if v > value:
+                self._array[row][k + 1] = (value, index)
+                tail = k + 1
+            if index - i >= self._window:
+                head = k + 1
+                break
+        self._coursors[row] = (head, tail)
+
 
 class Knapsack:
     def __init__(self, volume: int):
@@ -36,26 +43,22 @@ class Knapsack:
 
         return dp
 
-    @staticmethod
-    def monotone_add(k: int, n: int, l: list, v: tuple) -> int:
-        for i in range(-1, -n - 1, -1):
-            if v[l[i]] >= v[k]:         # if current element in queue is larger than given value(k), 
-                break                   # then stop seek backwardly
-        n = n + i + 1                   # n(n=len(l)) + i is current element(i starts from -1)
-        l[n] = k                        # l[n + i + 1] is next value(new tail, the minimum)
-        return n
-
     def wrap_optimum(self, value: tuple, size: tuple, quantity: tuple) -> np.ndarray:
         """
         """
         n = len(value)
         # TODO: Argument checking
         dp = np.zeros(self._volume + 1, dtype=np.int)
-        mq = np.zeros(self._volume)
+
         for i in range(n):
-            pass
+            c = min(self._volume // size[i], quantity[i])
+            queue = MonotoneArray(size[i], self._volume, c)
+            for k in range(c + 1):
+                for j in range(size[i]):
+                    pass
 
         return dp
+
             
 
 knapsack = Knapsack(15)
