@@ -1,5 +1,3 @@
-from sys import maxsize
-
 max_int = 0x7FFFFFFF
 n1 = int(max_int / 10)
 n2 = max_int % 10
