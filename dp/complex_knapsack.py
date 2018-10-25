@@ -2,23 +2,39 @@ import numpy as np
 
 
 class MonotoneArray:
-    def __init__(self, row: int, col: int, window: int):
-        self._array = np.zeros((row, col), dtype=np.int)
-        self._coursors = [(0, 0)] * row
+    def __init__(self: int, col: int, window: int):
+        self._array = np.zeros(col, dtype=np.int)
+        self._cursors = (0, 0)
         self._window = window
 
-    def put(self, row: int, value: int, index: int):
-        head, tail = self._coursors[row]
+    def put(self, value: int, index: int):
+        head, tail = self._cursors
 
         for k in range(tail, head - 1, -1):
-            v, i = self._array[row][k]
+            v, i = self._array[k]
             if v > value:
-                self._array[row][k + 1] = (value, index)
-                tail = k + 1
-            if index - i >= self._window:
-                head = k + 1
                 break
-        self._coursors[row] = (head, tail)
+            tail = k
+        self._array[tail] = (value, index)    
+
+        for k in range(head, tail):
+            v, i = self._array[k]
+            if index - i < self._window:
+                break
+            head = k
+            
+        
+        self._cursors = (head, tail)
+
+    def get(self) -> int:
+        head, tail = self._cursors
+        value, index = self._array[head]
+        return value
+
+    def reset(self, window: int):
+        self._window = window
+        self._cursors = (0, 0)
+
 
 
 class Knapsack:
@@ -53,8 +69,9 @@ class Knapsack:
         for i in range(n):
             c = min(self._volume // size[i], quantity[i])
             queue = MonotoneArray(size[i], self._volume, c)
-            for k in range(c + 1):
-                for j in range(size[i]):
+            for j in range(size[i]):
+                for k in range(c + 1):
+                    queue.put(j, dp[], k)
                     pass
 
         return dp
@@ -65,6 +82,32 @@ knapsack = Knapsack(15)
 
 r1 = knapsack.wrap((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (1, 1, 1, 1, 1))
 print(r1)
+r1 = knapsack.wrap_optimum((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (1, 1, 1, 1, 1))
+print(r1)
 
+r2 = knapsack.wrap((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (10, 10, 10, 10, 10))
+print(r2)
+r2 = knapsack.wrap_optimum((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (10, 10, 10, 10, 10))
+print(r2)
+
+r3 = knapsack.wrap((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (10, 10, 10, 3, 10))
+print(r3)
+r3 = knapsack.wrap_optimum((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (10, 10, 10, 3, 10))
+print(r3)
+
+r4 = knapsack.wrap((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (2, 10, 10, 3, 10))
+print(r4)
+r4 = knapsack.wrap_optimum((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (2, 10, 10, 3, 10))
+print(r4)
+
+r5 = knapsack.wrap((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (2, 10, 10, 3, 10))
+print(r5)
+r5 = knapsack.wrap_optimum((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (2, 10, 10, 3, 10))
+print(r5)
+
+r6 = knapsack.wrap((12, 6, 10, 5, 2), (5, 3, 1, 2, 1), (1, 2, 1, 2, 2))
+print(r6)
+r6 = knapsack.wrap_optimum((12, 6, 10, 5, 2), (5, 3, 1, 2, 1), (1, 2, 1, 2, 2))
+print(r6)
 
 pass
