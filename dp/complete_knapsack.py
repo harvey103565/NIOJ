@@ -108,20 +108,37 @@ knapsack = Knapsack(15)
 
 r1 = knapsack.wrap((12, 3, 10, 3, 6), (5, 4, 7, 2, 6))
 print(r1)
+r1 = knapsack.wrap_opt((12, 3, 10, 3, 6), (5, 4, 7, 2, 6))
+print(r1)
 
 r2 = knapsack.wrap((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
 print(r2)
+r2 = knapsack.wrap_opt((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r2)
 
-r3 = knapsack.wrap_opt((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+r3 = knapsack.wrap((12, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r3)
+r3 = knapsack.wrap_optimum((12, 3, 10, 5, 6), (5, 4, 7, 2, 6))
 print(r3)
 
+r4 = knapsack.wrap_opt((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r4)
 r4 = knapsack.wrap_optimum((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
 print(r4)
 
-r5 = knapsack.warp_opt_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+r5 = knapsack.wrap_opt((12, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r5)
+r5 = knapsack.wrap_optimum((12, 3, 10, 5, 6), (5, 4, 7, 2, 6))
 print(r5)
 
+r6 = knapsack.warp_opt_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r6)
 r6 = knapsack.wrap_optimum_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6))
 print(r6)
+
+r7 = knapsack.warp_opt_exact_match((12, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r7)
+r7 = knapsack.wrap_optimum_exact_match((12, 3, 10, 5, 6), (5, 4, 7, 2, 6))
+print(r7)
 
 pass
