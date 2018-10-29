@@ -4,20 +4,13 @@ class Solution:
         :type x: int
         :rtype: bool
         """
-        remainder = 0
-        if 0 < x < 10:
-            return True
+        m = 0
+        n = x
+        while n > 0:
+            m = m * 10 + n % 10
+            n = n // 10
 
-        while x > 9:
-            remainder = remainder * 10 + x % 10
-            if x == remainder:
-                return True
-
-            x = int(x / 10)
-            if x == remainder:
-                return True
-        
-        return False
+        return x == m
 
 
 s = Solution()
@@ -35,6 +28,12 @@ r = s.isPalindrome(10)
 print(r)
 
 r = s.isPalindrome(100)
+print(r)
+
+r = s.isPalindrome(1010)
+print(r)
+
+r = s.isPalindrome(1100)
 print(r)
 
 r = s.isPalindrome(-121)
