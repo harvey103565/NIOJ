@@ -121,3 +121,6 @@ bin/
 # ide
 .idea/
 .vscode/
+
+# wiki md files
+wiki/
