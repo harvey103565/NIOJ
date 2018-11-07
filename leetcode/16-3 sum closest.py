@@ -6,43 +6,60 @@ class Solution:
         :rtype: int
         """
         nums.sort()
-        n = len(nums)
-
-        result = sum(nums[:-4:-1])
-        if target >= result:
-            return result
-
+        i, n = 0, len(nums)
         result = sum(nums[:3])
-        if target <= result:
-            return result
-
-        def move_next(a: list, s: int, e: int, d: int) -> int:
-            v = a[s]
-            while a[s] == v and s != e:
-                s = s + d
-            return s
+        delta = abs(target - result)
 
         for i in range(n):
-            k = target - nums[i]
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
 
             l, r = i + 1, n - 1
             while l < r:
+                t_min = nums[i] + nums[l] + nums[l + 1]
+                t_max = nums[i] + nums[r] + nums[r - 1]
                 t = nums[i] + nums[l] + nums[r]
 
-                if abs(t - target) < abs(result - target):
+                if t_max < target:
+                    d = abs(t_max - target)
+                    if d < delta:
+                        result = t_max
+                        delta = d
+                    break
+
+                if t_min > target:
+                    d = abs(t_min - target)
+                    if d < delta:
+                        result = t_min
+                        delta = d
+                    break
+
+                d = abs(t - target)
+                if d < delta:
                     result = t
+                    delta = d
 
                 if t > target:
                     r -= 1
+                    while r > l and nums[r] == nums[r + 1]:
+                        r -= 1
                 elif t < target:
                     l += 1
+                    while l < r and nums[l] == nums[l - 1]:
+                        l += 1
                 else:
-                    break
-        
+                    return t
+
         return result
 
 
 s = Solution()
+
+r = s.threeSumClosest([0, 2, 1, -3], 1)
+print(r)
+
+r = s.threeSumClosest([-1, 2, 1, -4], -2)
+print(r)
 
 r = s.threeSumClosest([-1, 0, 1, 2, -1, -4], -2)
 print(r)
