@@ -14,7 +14,6 @@ class Knapsack:
             the i-th item is ignore, we also check the result of i - 1 sub-problem, but with the volumn of sack of v.
         """
         n = len(v)
-        # TODO: Argument checking
         dp = np.zeros((n, self._volume + 1), dtype=np.int)
 
         for i in range(n):
@@ -34,7 +33,6 @@ class Knapsack:
             result of former sub-problem.
         """
         n = len(v)
-        # TODO: Argument checking
         dp = np.zeros(self._volume + 1, dtype=np.int)
 
         for i in range(n):
@@ -43,19 +41,18 @@ class Knapsack:
 
         return dp
     
-    def warp_opt_exact_match(self, v: tuple, size: tuple) -> np.ndarray:
+    def warp_opt_exact_match(self, v: tuple, w: tuple) -> np.ndarray:
         """
         """
         n = len(v)
-        # TODO: Argument checking
         dp = np.array([-1] * (self._volume + 1), dtype=np.int)
 
         for i in range(n):
-            for W in range(self._volume, size[i] - 1, -1):
-                if W == size[i]:
+            for W in range(self._volume, w[i] - 1, -1):
+                if W == w[i]:
                     dp[W] = max(dp[W], v[i])
-                elif dp[W - size[i]] != -1:
-                    dp[W] = max(dp[W - size[i]] + v[i], dp[W])
+                elif dp[W - w[i]] != -1:
+                    dp[W] = max(dp[W - w[i]] + v[i], dp[W])
         
         return dp
 
