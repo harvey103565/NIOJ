@@ -1,10 +1,10 @@
 import numpy as np
 
 class Knapsack:
-    def __init__(self, volume: int):
-        self._volume = volume
+    def __init__(self, weight: int):
+        self._weight = weight
 
-    def wrap(self, value: tuple, size: tuple) -> np.ndarray:
+    def wrap(self, v: tuple, w: tuple) -> np.ndarray:
         """
         Wrap all item into knapsack
             : For complete knapsack problem, every item could be taken as many times as it could be. It's ordinary 
@@ -15,56 +15,53 @@ class Knapsack:
             zero one problem, any one demension matrix with the size of v is required. Thus, this is the way.
 
         """
-        n = len(value)
-        # TODO: Argument checking
-        dp = np.zeros(self._volume + 1, dtype=np.int)
+        n = len(v)
+        dp = np.zeros(self._weight + 1, dtype=np.int)
         
         for i in range(n):
-            k = self._volume // size[i]
+            k = self._weight // w[i]
             for l in range(k):
                 l = l   # eliminate warning
-                for v in range(self._volume, size[i] - 1, -1):
-                    dp[v] = max(dp[v - size[i]] + value[i], dp[v])
+                for W in range(self._weight, w[i] - 1, -1):
+                    dp[W] = max(dp[W - w[i]] + v[i], dp[W])
 
         return dp
 
-    def wrap_opt(self, value: tuple, size: tuple) -> np.ndarray:
+    def wrap_opt(self, v: tuple, w: tuple) -> np.ndarray:
         """
         Wrap all item into knapsack
             : A small optimization. Items are divided following the rule: [1/2, 1/4, 1/8, ... ] rather than [1, 1, 1]
             So the middle loop(the k-loop) run log(n) times instead of n time.
 
         """
-        n = len(value)
-        # TODO: Argument checking
-        dp = np.zeros(self._volume + 1, dtype=np.int)
+        n = len(v)
+        dp = np.zeros(self._weight + 1, dtype=np.int)
         
         for i in range(n):
             k = 1
-            l = self._volume // size[i]
+            l = self._weight // w[i]
             while k <= l:
-                for v in range(self._volume, size[i] * k - 1, -1):
-                    dp[v] = max(dp[v - size[i] * k] + value[i] * k, dp[v])
+                for W in range(self._weight, w[i] * k - 1, -1):
+                    dp[W] = max(dp[W - w[i] * k] + v[i] * k, dp[W])
                 k *= 2
 
         return dp
 
-    def warp_opt_exact_match(self, value: tuple, size: tuple) -> np.ndarray:
+    def warp_opt_exact_match(self, v: tuple, w: tuple) -> np.ndarray:
         """
         """
-        n = len(value)
-        # TODO: Argument checking
-        dp = np.array([-1] * (self._volume + 1), dtype=np.int)
+        n = len(v)
+        dp = np.array([-1] * (self._weight + 1), dtype=np.int)
         
         for i in range(n):
             k = 1
-            l = self._volume // size[i]
+            l = self._weight // w[i]
             while k <= l:
-                for v in range(self._volume, size[i] * k - 1, -1):
-                    if v == size[i] * k:
-                        dp[v] = max(dp[v], value[i] * k)
-                    elif dp[v - size[i] * k] != -1:
-                        dp[v] = max(dp[v - size[i] * k] + value[i] * k, dp[v])
+                for W in range(self._weight, w[i] * k - 1, -1):
+                    if W == w[i] * k:
+                        dp[W] = max(dp[W], v[i] * k)
+                    elif dp[W - w[i] * k] != -1:
+                        dp[W] = max(dp[W - w[i] * k] + v[i] * k, dp[W])
                 k *= 2
 
         return dp
@@ -79,26 +76,24 @@ class Knapsack:
             when v equals N * size[i] + M * size[i - 1] + ... the dp[v - size[i]] equals M * value[i - 1] + ...
         """
         n = len(value)
-        # TODO: Argument checking
-        dp = np.zeros(self._volume + 1, dtype=np.int)
+        dp = np.zeros(self._weight + 1, dtype=np.int)
 
         for i in range(n):
-            for v in range(size[i], self._volume + 1):
-                dp[v] = max(dp[v - size[i]] + value[i], dp[v])
+            for W in range(size[i], self._weight + 1):
+                dp[W] = max(dp[W - size[i]] + value[i], dp[W])
         
         return dp
 
     def wrap_optimum_exact_match(self, value: tuple, size: tuple) -> np.ndarray:
         n = len(value)
-        # TODO: Argument checking
-        dp = np.array([-1] * (self._volume + 1), dtype=np.int)
+        dp = np.array([-1] * (self._weight + 1), dtype=np.int)
 
         for i in range(n):
-            for v in range(size[i], self._volume + 1):
-                if v == size[i]:
-                    dp[v] = max(value[i], dp[v])
-                elif dp[v - size[i]] != -1:
-                    dp[v] = max(dp[v - size[i]] + value[i], dp[v])
+            for W in range(size[i], self._weight + 1):
+                if W == size[i]:
+                    dp[W] = max(value[i], dp[W])
+                elif dp[W - size[i]] != -1:
+                    dp[W] = max(dp[W - size[i]] + value[i], dp[W])
         
         return dp
 

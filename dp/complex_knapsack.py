@@ -37,84 +37,82 @@ class MonotoneArray:
 
 class Knapsack:
     def __init__(self, volume: int):
-        self._volume = volume
+        self._weight = volume
 
-    def wrap(self, value: tuple, size: tuple, quantity: tuple) -> np.ndarray:
+    def wrap(self, v: tuple, w: tuple, m: tuple) -> np.ndarray:
         """
             : Same solution with complete knapsack. There are n single ones for i-th item, so we change it to 0-1 
             knapsack problem.
         """
-        n = len(value)
-        # TODO: Argument checking
-        dp = np.zeros(self._volume + 1, dtype=np.int)
+        n = len(v)
+        dp = np.zeros(self._weight + 1, dtype=np.int)
         
         for i in range(n):
-            l = min(quantity[i], self._volume // size[i])
+            l = min(m[i], self._weight // w[i])
             for k in range(l):
-                for v in range(self._volume, size[i] - 1, -1):
-                    dp[v] = max(dp[v - size[i]] + value[i], dp[v])
+                for W in range(self._weight, w[i] - 1, -1):
+                    dp[W] = max(dp[W - w[i]] + v[i], dp[W])
 
         return dp
 
-    def wrap_opt(self, value: tuple, size: tuple, quantity: tuple) -> np.ndarray:
+    def wrap_opt(self, v: tuple, w: tuple, m: tuple) -> np.ndarray:
         """
             : Same solution with complete knapsack. There are n single ones for i-th item, so we change it to 0-1 
             knapsack problem.
         """
-        n = len(value)
-        # TODO: Argument checking
-        dp = np.zeros(self._volume + 1, dtype=np.int)
+        n = len(v)
+        dp = np.zeros(self._weight + 1, dtype=np.int)
         
         for i in range(n):
             k = 1
-            l = min(quantity[i], self._volume // size[i])
+            l = min(m[i], self._weight // w[i])
             while l > 0:
-                for v in range(self._volume, size[i] * k - 1, -1):
-                    dp[v] = max(dp[v - size[i] * k] + value[i] * k, dp[v])
+                for W in range(self._weight, w[i] * k - 1, -1):
+                    dp[W] = max(dp[W - w[i] * k] + v[i] * k, dp[W])
                 l -= k
                 k = min(2 * k, l)
 
         return dp
 
-    def wrap_opt_exact_match(self, value: tuple, size: tuple, quantity: tuple) -> np.ndarray:
+    def wrap_opt_exact_match(self, v: tuple, w: tuple, m: tuple) -> np.ndarray:
         """
             : Same solution with complete knapsack. There are n single ones for i-th item, so we change it to 0-1 
             knapsack problem.
         """
-        n = len(value)
+        n = len(v)
         # TODO: Argument checking
-        dp = np.array([-1] * (self._volume + 1), dtype=np.int)
+        dp = np.array([-1] * (self._weight + 1), dtype=np.int)
         
         for i in range(n):
             k = 1
-            l = min(quantity[i], self._volume // size[i])
+            l = min(m[i], self._weight // w[i])
             while l > 0:
-                for v in range(self._volume, size[i] * k - 1, -1):
-                    if v == size[i] * k:
-                        dp[v] = value[i] * k
-                    elif dp[v - size[i] * k] != -1:
-                        dp[v] = max(dp[v - size[i] * k] + value[i] * k, dp[v])
+                for W in range(self._weight, w[i] * k - 1, -1):
+                    if W == w[i] * k:
+                        dp[W] = v[i] * k
+                    elif dp[W - w[i] * k] != -1:
+                        dp[W] = max(dp[W - w[i] * k] + v[i] * k, dp[W])
                 l -= k
                 k = min(2 * k, l)
 
         return dp
 
-    def wrap_optimum(self, value: tuple, size: tuple, quantity: tuple) -> np.ndarray:
+    def wrap_optimum(self, v: tuple, w: tuple, m: tuple) -> np.ndarray:
         """
         """
-        n = len(value)
+        n = len(v)
         # TODO: Argument checking
-        dp = np.zeros(self._volume + 1, dtype=np.int)
-        ma = MonotoneArray(self._volume + 1)
+        dp = np.zeros(self._weight + 1, dtype=np.int)
+        ma = MonotoneArray(self._weight + 1)
         
         for i in range(n):
-            cnt = min(self._volume // size[i], quantity[i])
-            for r in range(size[i]):
+            cnt = min(self._weight // w[i], m[i])
+            for r in range(w[i]):
                 ma.reset(cnt)
-                for v in range(r, self._volume + 1, size[i]):
-                    k = v // size[i]
-                    ma.put(dp[v] - k * value[i], k)
-                    dp[v] = ma.get() + k * value[i]
+                for W in range(r, self._weight + 1, w[i]):
+                    k = W // w[i]
+                    ma.put(dp[W] - k * v[i], k)
+                    dp[W] = ma.get() + k * v[i]
 
         return dp
 
