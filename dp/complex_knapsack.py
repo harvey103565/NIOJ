@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class MonotoneArray:
+class MonoQueue:
     def __init__(self: int, col: int):
         self._array = [None] * col
         self._cursors = None
@@ -80,7 +80,6 @@ class Knapsack:
             knapsack problem.
         """
         n = len(v)
-        # TODO: Argument checking
         dp = np.array([-1] * (self._weight + 1), dtype=np.int)
         
         for i in range(n):
@@ -99,11 +98,12 @@ class Knapsack:
 
     def wrap_optimum(self, v: tuple, w: tuple, m: tuple) -> np.ndarray:
         """
+            : MonoArray, when the index value of a node is less than k
+            the node is removed from the MonoQueue
         """
         n = len(v)
-        # TODO: Argument checking
         dp = np.zeros(self._weight + 1, dtype=np.int)
-        ma = MonotoneArray(self._weight + 1)
+        ma = MonoQueue(self._weight + 1)
         
         for i in range(n):
             cnt = min(self._weight // w[i], m[i])
