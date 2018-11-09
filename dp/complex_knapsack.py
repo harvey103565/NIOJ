@@ -1,4 +1,7 @@
 import numpy as np
+from sys import maxsize
+
+min_minus_int = -maxsize - 1
 
 
 class MonoQueue:
@@ -17,22 +20,38 @@ class MonoQueue:
             
             if v < value:
                 tail = j + 1
-                head = min(head, tail - 1)
                 break
         else:
             tail += 1
 
-        self._array[tail - 1] = (value, index)
+        # head = min(head, tail - 1)
         self._cursors = (head, tail)
+
+        self._array[tail - 1] = (value, index)
 
     def get(self) -> int:
         head, tail = self._cursors
+        if head == tail:
+            return 0
+
         value, index = self._array[head]
+        index = index
+
         return value
 
     def reset(self, window: int):
         self._window = window
         self._cursors = (0, 0)
+
+    def clear_old_value(self, index):
+        head, tail = self._cursors
+        for j in range(head, tail):
+            v, i = self._array[j]
+            if index - i > self._window:
+                head += 1
+
+        # head = min(head, tail - 1)
+        self._cursors = (head, tail)
 
 
 class Knapsack:
@@ -103,19 +122,46 @@ class Knapsack:
         """
         n = len(v)
         dp = np.zeros(self._weight + 1, dtype=np.int)
-        ma = MonoQueue(self._weight + 1)
+        mq = MonoQueue(self._weight + 1)
         
         for i in range(n):
             cnt = min(self._weight // w[i], m[i])
             for r in range(w[i]):
-                ma.reset(cnt)
+                mq.reset(cnt)
                 for W in range(r, self._weight + 1, w[i]):
                     k = W // w[i]
-                    ma.put(dp[W] - k * v[i], k)
-                    dp[W] = ma.get() + k * v[i]
+                    mq.put(dp[W] - k * v[i], k)
+                    dp[W] = mq.get() + k * v[i]
 
         return dp
 
+
+    def wrap_optimum_exact_match(self, v: tuple, w: tuple, m: tuple) -> np.ndarray:
+        n = len(v)
+        dp = [0] + [None] * self._weight
+        mq = MonoQueue(self._weight + 1)
+        
+        for i in range(n):
+            cnt = min(self._weight // w[i], m[i])
+            for r in range(w[i]):
+                if dp[r] is None:
+                    continue
+
+                mq.reset(cnt)
+                for W in range(r, self._weight + 1, w[i]):
+                    k = W // w[i]
+
+                    if dp[W] is None:
+                        mq.clear_old_value(k)
+
+                        if all(dp[W - j * w[i]] is None for j in range(min(k, cnt), 0, -1)):
+                            continue
+                    else:
+                        mq.put(dp[W] - k * v[i], k)
+    
+                    dp[W] = mq.get() + k * v[i]
+
+        return dp
             
 
 knapsack = Knapsack(15)
@@ -165,13 +211,19 @@ print(r6)
 print("\n7. wrap_opt_exact_match")
 r7 = knapsack.wrap_opt_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6), (2, 3, 1, 3, 10))
 print(r7)
+r7 = knapsack.wrap_optimum_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6), (2, 3, 1, 3, 10))
+print(r7)
 
 print("\n8. wrap_opt_exact_match")
 r8 = knapsack.wrap_opt_exact_match((12, 6, 10, 5, 2), (5, 3, 1, 2, 1), (1, 2, 1, 2, 2))
 print(r8)
+r8 = knapsack.wrap_optimum_exact_match((12, 6, 10, 5, 2), (5, 3, 1, 2, 1), (1, 2, 1, 2, 2))
+print(r8)
 
 print("\n9. wrap_opt_exact_match(Complete knapsack)")
 r9 = knapsack.wrap_opt_exact_match((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (10, 10, 10, 10, 10))
+print(r9)
+r9 = knapsack.wrap_optimum_exact_match((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (10, 10, 10, 10, 10))
 print(r9)
 
 pass
