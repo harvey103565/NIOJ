@@ -19,25 +19,22 @@ class MonoQueue:
                 head += 1
             
             if v < value:
+                head = min(head, j)
                 tail = j + 1
                 break
         else:
             tail += 1
 
-        # head = min(head, tail - 1)
         self._cursors = (head, tail)
-
         self._array[tail - 1] = (value, index)
 
-    def get(self) -> int:
+    def get(self) -> tuple:
         head, tail = self._cursors
         if head == tail:
-            return 0
+            return 0, -1
 
         value, index = self._array[head]
-        index = index
-
-        return value
+        return value, index
 
     def reset(self, window: int):
         self._window = window
@@ -50,7 +47,6 @@ class MonoQueue:
             if index - i > self._window:
                 head += 1
 
-        # head = min(head, tail - 1)
         self._cursors = (head, tail)
 
 
@@ -99,17 +95,18 @@ class Knapsack:
             knapsack problem.
         """
         n = len(v)
-        dp = np.array([-1] * (self._weight + 1), dtype=np.int)
+        dp = [0] + [None] * (self._weight)
         
         for i in range(n):
             k = 1
             l = min(m[i], self._weight // w[i])
             while l > 0:
                 for W in range(self._weight, w[i] * k - 1, -1):
+                    p = dp[W] if dp[W] else -1
                     if W == w[i] * k:
-                        dp[W] = v[i] * k
-                    elif dp[W - w[i] * k] != -1:
-                        dp[W] = max(dp[W - w[i] * k] + v[i] * k, dp[W])
+                        dp[W] = max(v[i] * k, p)
+                    elif dp[W - w[i] * k] != None:
+                        dp[W] = max(dp[W - w[i] * k] + v[i] * k, p)
                 l -= k
                 k = min(2 * k, l)
 
@@ -131,7 +128,8 @@ class Knapsack:
                 for W in range(r, self._weight + 1, w[i]):
                     k = W // w[i]
                     mq.put(dp[W] - k * v[i], k)
-                    dp[W] = mq.get() + k * v[i]
+                    value, index = mq.get()
+                    dp[W] = value + k * v[i]
 
         return dp
 
@@ -144,22 +142,18 @@ class Knapsack:
         for i in range(n):
             cnt = min(self._weight // w[i], m[i])
             for r in range(w[i]):
-                if dp[r] is None:
-                    continue
-
                 mq.reset(cnt)
                 for W in range(r, self._weight + 1, w[i]):
                     k = W // w[i]
 
                     if dp[W] is None:
                         mq.clear_old_value(k)
-
-                        if all(dp[W - j * w[i]] is None for j in range(min(k, cnt), 0, -1)):
-                            continue
                     else:
                         mq.put(dp[W] - k * v[i], k)
     
-                    dp[W] = mq.get() + k * v[i]
+                    value, index = mq.get()
+                    if index != -1:
+                        dp[W] = value + k * v[i]
 
         return dp
             
@@ -208,19 +202,19 @@ print(r6)
 r6 = knapsack.wrap_optimum((12, 6, 10, 5, 2), (5, 3, 1, 2, 1), (1, 2, 1, 2, 2))
 print(r6)
 
-print("\n7. wrap_opt_exact_match")
+print("\n7. wrap_opt_exact_match vs wrap_optimum_exact_match")
 r7 = knapsack.wrap_opt_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6), (2, 3, 1, 3, 10))
 print(r7)
 r7 = knapsack.wrap_optimum_exact_match((13, 3, 10, 5, 6), (5, 4, 7, 2, 6), (2, 3, 1, 3, 10))
 print(r7)
 
-print("\n8. wrap_opt_exact_match")
+print("\n8. wrap_opt_exact_match vs wrap_optimum_exact_match")
 r8 = knapsack.wrap_opt_exact_match((12, 6, 10, 5, 2), (5, 3, 1, 2, 1), (1, 2, 1, 2, 2))
 print(r8)
 r8 = knapsack.wrap_optimum_exact_match((12, 6, 10, 5, 2), (5, 3, 1, 2, 1), (1, 2, 1, 2, 2))
 print(r8)
 
-print("\n9. wrap_opt_exact_match(Complete knapsack)")
+print("\n9. wrap_opt_exact_match(Complete knapsack) vs wrap_optimum_exact_match")
 r9 = knapsack.wrap_opt_exact_match((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (10, 10, 10, 10, 10))
 print(r9)
 r9 = knapsack.wrap_optimum_exact_match((12, 3, 10, 5, 6), (5, 4, 7, 2, 6), (10, 10, 10, 10, 10))
