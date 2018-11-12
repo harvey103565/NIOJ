@@ -15,12 +15,19 @@ class Solution:
             return []
 
         for i in range(3, n):
+            if i < n - 1 and nums[i + 1] == nums[i]:
+                continue
+
             if sum(nums[i - 3: i + 1]) < target:
                 continue
 
             for j in range(2, i):
+                if j < i - 1 and nums[j + 1] == nums[j]:
+                    continue
+
                 if sum(nums[j - 2: j + 1]) + nums[i] < target:
                     continue
+
                 if sum(nums[0:3]) + nums[i] > target:
                     break
 
