@@ -125,3 +125,4 @@ bin/
 # wiki md files
 wiki/
 wikis/
+playground.py
